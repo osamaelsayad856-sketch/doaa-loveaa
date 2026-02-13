@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>دعاء ♾️</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;700&display=swap" rel="stylesheet">
+
+<style>
+body{
+    margin:0;
+    font-family:'Cairo',sans-serif;
+    background:black;
+    color:white;
+    overflow:hidden;
+}
+
+/* النجوم */
+canvas{
+    position:fixed;
+    top:0;
+    left:0;
+    z-index:-1;
+}
+
+/* الصفحات */
+.section{
+    position:absolute;
+    width:100%;
+    height:100vh;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+    opacity:0;
+    transition:1.5s;
+}
+
+.active{
+    opacity:1;
+}
+
+h1{
+    font-size:40px;
+    font-weight:700;
+    text-shadow:0 0 20px rgba(255,255,255,.5);
+}
+
+p{
+    max-width:700px;
+    font-size:22px;
+    line-height:1.8;
+    font-weight:300;
+}
+
+button{
+    padding:14px 35px;
+    margin-top:40px;
+    font-size:18px;
+    border:none;
+    border-radius:50px;
+    background:linear-gradient(45deg,#ff4b5c,#ff758c);
+    color:white;
+    cursor:pointer;
+    transition:.4s;
+}
+
+button:hover{
+    transform:scale(1.1);
+    box-shadow:0 0 25px #ff758c;
+}
+
+/* سلايدر */
+.slider{
+    width:80%;
+    max-width:600px;
+    height:400px;
+    background-size:cover;
+    background-position:center;
+    border-radius:20px;
+    box-shadow:0 0 40px rgba(255,255,255,.2);
+    transition:1s;
+}
+
+/* النهاية */
+#counter{
+    margin-top:30px;
+    font-size:24px;
+}
+</style>
+</head>
+<body>
+
+<canvas id="stars"></canvas>
+
+<audio id="music" loop>
+<source src="song.mp3" type="audio/mpeg">
+</audio>
+
+<!-- المشهد 1 -->
+<div id="s1" class="section active">
+<h1 id="typing"></h1>
+<button onclick="start()">ابدأي الحكاية ♾️</button>
+</div>
+
+<!-- المشهد 2 -->
+<div id="s2" class="section">
+<h1>أجمل لحظاتنا</h1>
+<div class="slider" id="slider"></div>
+<button onclick="next('s3')">كمّلي…</button>
+</div>
+
+<!-- المشهد 3 -->
+<div id="s3" class="section">
+<h1>رسالة ليكي يا دعاء</h1>
+<p>
+من 2021…  
+وأنا كل يوم بحبك أكتر من اللي قبله.  
+وجودك نور دخل حياتي وغير كل حاجة فيها.  
+<br><br>
+يمكن الناس كلها تقولك دعاء…  
+بس أنا بس اللي ليا أقولك  
+<strong>كوتي موتي بوتي ❤️</strong>
+</p>
+<button onclick="next('s4')">آخر مشهد…</button>
+</div>
+
+<!-- المشهد 4 -->
+<div id="s4" class="section">
+<h1>تحبي نكمّل عمرنا سوا؟ 💍</h1>
+<button onclick="final()">أيوه ♾️</button>
+</div>
+
+<!-- النهاية -->
+<div id="s5" class="section">
+<h1>كوتي موتي بوتي للأبد ✨</h1>
+<div id="counter"></div>
+</div>
+
+<script>
+
+/* كتابة سينمائية */
+let text="إلى دعاء… حب عمري من 2021 ✨";
+let i=0;
+function type(){
+ if(i<text.length){
+  document.getElementById("typing").innerHTML+=text[i];
+  i++;
+  setTimeout(type,80);
+ }
+}
+type();
+
+/* تنقل */
+function next(id){
+ document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+ document.getElementById(id).classList.add('active');
+}
+
+function start(){
+ document.getElementById("music").volume=0;
+ document.getElementById("music").play();
+ fadeMusic();
+ next('s2');
+}
+
+/* صوت تدريجي */
+function fadeMusic(){
+ let music=document.getElementById("music");
+ let vol=0;
+ let interval=setInterval(()=>{
+  if(vol<0.5){
+   vol+=0.01;
+   music.volume=vol;
+  }else clearInterval(interval);
+ },200);
+}
+
+/* سلايدر */
+let images=["photo1.jpg","photo2.jpg","photo3.jpg"];
+let index=0;
+setInterval(()=>{
+ document.getElementById("slider").style.backgroundImage=
+ "url('"+images[index]+"')";
+ index=(index+1)%images.length;
+},3000);
+
+/* النهاية */
+function final(){
+ next('s5');
+ let startDate=new Date("2021-01-01");
+ let today=new Date();
+ let days=Math.floor((today-startDate)/(1000*60*60*24));
+ document.getElementById("counter").innerHTML=
+ "مرّ على حبنا "+days+" يوم من السعادة ♾️";
+}
+
+/* نجوم */
+let canvas=document.getElementById("stars");
+let ctx=canvas.getContext("2d");
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
+let stars=[];
+for(let i=0;i<200;i++){
+ stars.push({x:Math.random()*canvas.width,
+             y:Math.random()*canvas.height,
+             r:Math.random()*2});
+}
+function draw(){
+ ctx.clearRect(0,0,canvas.width,canvas.height);
+ ctx.fillStyle="white";
+ stars.forEach(s=>{
+  ctx.beginPath();
+  ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+  ctx.fill();
+ });
+ requestAnimationFrame(draw);
+}
+draw();
+
+</script>
+
+</body>
+</html>
